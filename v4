@@ -1,0 +1,34 @@
+from multiprocessing import Pool, cpu_count
+import math
+from timeit import default_timer
+
+
+def factorize(number):
+    divider = []
+    for i in range(1, int(math.sqrt(number)) + 1):
+        if number % i == 0:
+            divider.append(i)
+    return divider
+
+
+def factorize_sync(numbers):
+    return [factorize(number) for number in numbers]
+
+
+def factorize_async(numbers):
+    with Pool(cpu_count()) as pool:
+        result = pool.map(factorize, numbers)
+    return result
+
+
+if __name__ == "__main__":
+    start = default_timer()
+    factorize_sync([128, 255, 99999])
+    elapsed_sync = default_timer() - start
+
+    start = default_timer()
+    factorize_async([128, 255, 99999])
+    elapsed_async = default_timer() - start
+
+    print(f"Elapsed time of synchronous done function is {elapsed_sync} seconds")
+    print(f"Elapsed time of asynchronous done function is {elapsed_async} seconds")
